@@ -1,1 +1,1 @@
-# IFT1025-TP2-server
+# IFT1025-TP2-server (Hokan Gillot)
