@@ -1,10 +1,18 @@
 package server;
 
 import javafx.util.Pair;
+import server.models.Course;
+import server.models.RegistrationForm;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -138,7 +146,6 @@ public class Server {
             handleLoadCourses(arg);
         }
     }
-
     /**
      Lire un fichier texte contenant des informations sur les cours et les transofmer en liste d'objets 'Course'.
      La méthode filtre les cours par la session spécifiée en argument.
@@ -147,16 +154,61 @@ public class Server {
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) {
-        // TODO: implémenter cette méthode
+        try{
+            //Lire le contenu de cours.txt
+            FileReader fr = new FileReader("src/main/java/server/data/cours.txt");
+            BufferedReader reader = new BufferedReader(fr);
+            String line = reader.readLine();
+            //Liste des cours pour une session 
+            ArrayList coursSession = new ArrayList<>();
+            while (line != null)
+            {
+                String[] part = line.split("\t");
+                String numero = part[0];
+                String titre = part[1];
+                String session = part[2];
+                //Vérification de la sessions spécifiée
+                if (session == arg) 
+                {
+                    Course cours = new Course(titre, numero, session);
+                    coursSession.add(cours); //Ajout cours à liste
+                }
+            }
+            objectOutputStream.writeObject(coursSession);
+            reader.close();
+        }catch (IOException ex){
+            System.out.println("Erreur lors de la lecture ou l'écriture du fichier");
+        }
     }
-
-    /**
-     Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
-     et renvoyer un message de confirmation au client.
-     La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
-     */
+    
     public void handleRegistration() {
-        // TODO: implémenter cette méthode
-    }
+        try{
+            //Création d'un writer pour écrire dans le fichier inscription.txt
+            FileWriter fw = new FileWriter("src/main/java/server/data/inscription.txt", true);
+            BufferedWriter writer = new BufferedWriter(fw);
+
+            RegistrationForm ficheInscription = (RegistrationForm)objectInputStream.readObject();
+
+            writer.write(ficheInscription.getCourse().getSession()+"\t"+
+            ficheInscription.getCourse().getCode()+"\t"+
+            ficheInscription.getMatricule()+"\t"+
+            ficheInscription.getPrenom()+"\t"+
+            ficheInscription.getNom()+"\t"+
+            ficheInscription.getEmail()+"\n");
+            writer.close();
+
+            String valide = "Inscription réussie de "+
+                            ficheInscription.getPrenom() + " " + 
+                            ficheInscription.getNom()+" au cours de " +
+                            ficheInscription.getCourse().getCode() + ".";
+            objectOutputStream.writeObject(valide);
+            objectOutputStream.flush();
+
+            
+        } catch (IOException | ClassNotFoundException ex){
+        System.out.println("Erreur");
+        }
+}
+
 }
 
