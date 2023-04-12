@@ -158,24 +158,27 @@ public class Server {
             //Lire le contenu de cours.txt
             FileReader fr = new FileReader("src/main/java/server/data/cours.txt");
             BufferedReader reader = new BufferedReader(fr);
-            String line = reader.readLine();
-            //Liste des cours pour une session 
-            ArrayList coursSession = new ArrayList<>();
-            while (line != null)
+            String line;
+            //Liste des cours pour une session
+            ArrayList<Course> coursSession = new ArrayList<Course>();
+            while ((line = reader.readLine()) != null)
             {
                 String[] part = line.split("\t");
                 String numero = part[0];
                 String titre = part[1];
                 String session = part[2];
+                Course cours = new Course(titre, numero, session);
                 //Vérification de la sessions spécifiée
-                if (session == arg) 
+                if (cours.getSession().equals(arg))
                 {
-                    Course cours = new Course(titre, numero, session);
                     coursSession.add(cours); //Ajout cours à liste
                 }
             }
-            objectOutputStream.writeObject(coursSession);
             reader.close();
+            objectOutputStream.writeObject(coursSession);
+            objectOutputStream.flush();
+            
+            
         }catch (IOException ex){
             System.out.println("Erreur lors de la lecture ou l'écriture du fichier");
         }
@@ -198,12 +201,10 @@ public class Server {
             writer.close();
 
             String valide = "Inscription réussie de "+
-                            ficheInscription.getPrenom() + " " + 
-                            ficheInscription.getNom()+" au cours de " +
+                            ficheInscription.getPrenom() + " au cours de " +
                             ficheInscription.getCourse().getCode() + ".";
             objectOutputStream.writeObject(valide);
             objectOutputStream.flush();
-
             
         } catch (IOException | ClassNotFoundException ex){
         System.out.println("Erreur");
