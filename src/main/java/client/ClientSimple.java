@@ -96,17 +96,25 @@ public class ClientSimple {
         String nom = scanner3.nextLine();
         System.out.println("Veuillez saisir votre email: ");
         String email = scanner3.nextLine();
-        if ( ! email.contains("@") && email.contains(".")){
+        if ( ! (email.contains("@") && email.contains("."))){
             System.out.println("Email invalide");
             throw new IllegalArgumentException();
         }
+
+        //Contrôle saisie de la matricule
         System.out.println("Veuillez saisir votre matricule: ");
         String matricule = scanner3.nextLine();
-        if (matricule.length() != 8){
+        try {
+            Integer.parseInt(matricule);
+            if (matricule.length() != 8) {
+                throw new NumberFormatException();
+            }
+        }catch(NumberFormatException e){
             System.out.println("Matricule invalide");
             throw new IllegalArgumentException();
         }
 
+        //Contrôle saisie du code du cours
         System.out.println("Veuillez saisir le code du cours: ");
         String code = scanner3.nextLine();
         try {
@@ -153,7 +161,7 @@ public class ClientSimple {
         System.out.println("Felicitations! "+ validation);
         writer.close();
         reader.close();
-        
+
     }catch (UnknownHostException e) {
     // TODO Auto-generated catch block
     e.printStackTrace();
