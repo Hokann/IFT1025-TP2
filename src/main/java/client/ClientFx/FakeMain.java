@@ -1,10 +1,8 @@
 package client.ClientFx;
 
-/**
- * Classe pour construire le JAR du clientFX, démarre l'application.
- */
+import javafx.application.Application;
 public class FakeMain {
-    public static void main(String[] args){
-        client.ClientFx.Main.main(args);
+    public static void main (String[] args){
+        Application.launch(Main.class);
     }
 }
