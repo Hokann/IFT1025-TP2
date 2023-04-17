@@ -1,0 +1,12 @@
+Lien démo: https://youtu.be/wJkGI4KcIiE
+
+P.S.
+démo de l'interface graphique commence à 1:20
+Le lancement de chaque JAR est effectué avec la commande "java -jar".
+
+Avant 1:20 je montre le client_simple.jar, server.jar et mes paramêtres :
+Openjdk version 14.0.2
+Language level: Java 17
+Import of jdk 17.0.6 lib (JavaFX)
+VM options: --module-path ../javafx-sdk-17.0.6/lib --add-modules=javafx.controls,javafx.fxml
+
