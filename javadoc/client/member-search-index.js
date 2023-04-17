@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"client.ClientFx","c":"Main","l":"Main()","url":"%3Cinit%3E()"},{"p":"client.ClientFx","c":"Main","l":"start(Stage)","url":"start(javafx.stage.Stage)"}]

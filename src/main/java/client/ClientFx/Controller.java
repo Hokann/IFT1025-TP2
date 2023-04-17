@@ -10,8 +10,19 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+/**
+ * Classe qui traite les évènements de l'interface graphique. Ces évènements sont déclenchés par l'input de
+ * l'utilisateur.
+ */
 public class Controller {
 
+    /**
+     * Méthode qui affiche les cours d'une session donnée (l'utilisateur choisie la session).
+     * On se connecte au serveur, et nous récupérons la liste des cours de la session.
+     *
+     * @param session la session choisie par l'utilisateur
+     * @return la liste des cours disponibles pour la session
+     */
     public static ObservableList<Course> afficherCours(String session) {
         ObservableList<Course> cours = FXCollections.observableArrayList();
         try {
@@ -38,6 +49,14 @@ public class Controller {
         return cours;
     }
 
+    /**
+     * Méthode qui récupère le formulaire rempli par l'utilisateur sur l'interface. Puis, des contrôles de saisie sont
+     * effectués pour assurer que l'étudiant peut s'inscrire. Si l'inscription est possible, la méthode miseAJourInscription
+     * est appelée.
+     *
+     * @param args String qui comporte chaque entrée de l'utilisateur
+     * @return miseAJourInscription(), méthode qui affiche le resultat de l'inscription (succes ou echec)
+     */
     public static String testInscription(String args) {
         String[] inputUser = args.split(" ");
         String prenom = inputUser[0];
@@ -91,6 +110,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Méthode qui se connecte au serveur et essaie d'inscrire l'étudiant au cours spécifié sur l'interface.
+     *
+     * @param inscription formulaire d'inscription rempli par l'utilisateur
+     * @return String de succès ou d'échec à l'inscription
+     */
     public static String miseAJourInscription(RegistrationForm inscription){
         try {
             Socket clientSocket = new Socket("127.0.0.1", 1337);

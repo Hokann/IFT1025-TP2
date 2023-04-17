@@ -8,7 +8,6 @@ public class ServerLauncher {
      * Constante qui représente le port où le serveur sera connecté
      */
     public final static int PORT = 1337;
-
     /**
      * Méthode main pour démarrer le serveur.
      *

@@ -26,7 +26,7 @@ public class View extends HBox {
 
     /**
      * Méthode qui créer l'affichage des cours sous la forme d'une table avec
-     * Une colonne est dédiée au nom du cours, l'autre est dédiée au code du cours.
+     * une colonne dédiée au nom du cours, et une autre dédiée au code du cours.
      *
      * @param table table qui affiche les cours disponibles
      */
@@ -62,7 +62,7 @@ public class View extends HBox {
     }
 
     /**
-     * Méthode qui le formulaire d'inscription.
+     * Méthode qui créé le formulaire d'inscription.
      * Il s'agit de créer une grille (gridpane) et de placer les éléments du formulaire dedans.
      *
      * @param pane la grille du formulaire
@@ -95,7 +95,12 @@ public class View extends HBox {
     }
 
     /**
+     * Méthode principale qui construit l'ensemble de l'interface graphique et définit aussi des évènements
+     * lorsque l'utilisateur intéragit avec l'interface (via clavier, boutton, etc...).
+     * On retrouve dans cette méthode 2 fonctionnalités: (1) l'affichage des cours d'une session dans la
+     * table, et (2) L'inscription au cours d'un étudiant ayant rempli correctement le formulaire.
      *
+     * Finalement, on affiche une alerte de confirmation d'inscription ou d'erreur à l'inscription.
      */
     public View() {
 
@@ -131,7 +136,7 @@ public class View extends HBox {
         createBox(box, choiceBox, loadButton);
         lside.getChildren().add(box);
 
-        //FONCTIONALITÉ 1: Lorsque l'utilisateur appuie sur le bouton "charger", on va chercher les cours de cette session
+        //FONCTIONALITÉ (1): Lorsque l'utilisateur appuie sur le bouton "charger", on va chercher les cours de cette session
         //et on les affichent sur le tableau de cours.
         loadButton.setOnAction(event -> {
              ObservableList<Course> listeCours  = Controller.afficherCours(choiceBox.getValue());
@@ -152,10 +157,10 @@ public class View extends HBox {
         sendButton.setMaxSize(100,50);
         rside.getChildren().add(sendButton);
 
-        //FONCTIONALITÉ 2:
+        //FONCTIONALITÉ (2): L'inscription au cours de l'étudiant
         sendButton.setOnAction(event -> {
             try {
-
+                //Verification préliminaire si les champs sont vides.
                 if (prenomField.getText().equals("") || nomField.getText().equals("") || emailField.getText().equals("")
                         || matriculeField.getText().equals("")
                 ){
@@ -164,7 +169,8 @@ public class View extends HBox {
                 String inputUser = prenomField.getText() + " " + nomField.getText() + " " +
                         emailField.getText() + " " + matriculeField.getText() + " "
                         + coursSelect.getCode() + " " + coursSelect.getSession()+" "+coursSelect.getName();
-                //Verification que l'inscription est possible & inscription si oui
+
+                //Verification que l'inscription est possible & inscription de l'étudiant
                 String messageAlert = Controller.testInscription(inputUser);
 
                 //Message de succes ou echec

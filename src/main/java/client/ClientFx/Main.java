@@ -9,7 +9,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 	/**
-	 * Méthode qui initialise l'application.
+	 * Méthode qui initialise l'interface graphique.
 	 *
 	 * @param stage écran d'affichage
 	 */
@@ -20,5 +20,9 @@ public class Main extends Application {
 		stage.setScene(scene);
 		stage.setTitle("Inscription UdeM");
 		stage.show();
+	}
+
+	public static void main(String[] args) {
+		launch();
 	}
 }
