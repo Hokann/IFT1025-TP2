@@ -6,13 +6,11 @@ import server.models.RegistrationForm;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -41,8 +39,8 @@ public class Server {
      * Le constructeur de la classe Server. Il permet d'initialiser un serveur (un objet de type Server) avec sa liste
      * de gestionnaires d'évènements (EventHandler).
      *
-     * @param port port du serveur
-     * @throws IOException
+     * @param port Port du serveur
+     * @throws IOException Exception lors de l'input/l'output
      */
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
@@ -95,7 +93,7 @@ public class Server {
      * Méthode qui parcourt les commandes du client (obtenues avec le Stream) et les traites une par une.
      *
      * @throws IOException Exception lorsque la commande est erronée (mauvais format par exemple)
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException Exception lorsque la classe n'a pas été trouvée
      */
     public void listen() throws IOException, ClassNotFoundException {
         String line;
@@ -124,7 +122,7 @@ public class Server {
     /**
      * Méthode pour déconnecter le client du serveur.
      *
-     * @throws IOException
+     * @throws IOException Erreur lors de l'output.
      */
     public void disconnect() throws IOException {
         objectOutputStream.close();
@@ -146,21 +144,21 @@ public class Server {
             handleLoadCourses(arg);
         }
     }
+
     /**
-     Lire un fichier texte contenant des informations sur les cours et les transofmer en liste d'objets 'Course'.
-     La méthode filtre les cours par la session spécifiée en argument.
-     Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
-     La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
-     @param arg la session pour laquelle on veut récupérer la liste des cours
+     * Méthode qui récupère les cours dans cours.txt, et les convertis en type Course (avec leur informations
+     * correspondantes: titre, numeéro, session). Puis, les cours de la session donnée en arguments sont mis dans
+     * un tableau. Finalement, ce tableau est renvoyé au client.
+     *
+     * @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) {
         try{
-            //Lire le contenu de cours.txt
+            ArrayList<Course> coursSession = new ArrayList<Course>();
+
             FileReader fr = new FileReader("src/main/java/server/data/cours.txt");
             BufferedReader reader = new BufferedReader(fr);
             String line;
-            //Liste des cours pour une session
-            ArrayList<Course> coursSession = new ArrayList<Course>();
             while ((line = reader.readLine()) != null)
             {
                 String[] part = line.split("\t");
@@ -168,48 +166,44 @@ public class Server {
                 String titre = part[1];
                 String session = part[2];
                 Course cours = new Course(titre, numero, session);
-                //Vérification de la sessions spécifiée
+                //Vérification de la session spécifiée
                 if (cours.getSession().equals(arg))
                 {
-                    coursSession.add(cours); //Ajout cours à liste
+                    coursSession.add(cours); //Ajout du cours à la liste
                 }
             }
             reader.close();
+
             objectOutputStream.writeObject(coursSession);
-            objectOutputStream.flush();
-            
-            
         }catch (IOException ex){
             System.out.println("Erreur lors de la lecture ou l'écriture du fichier");
         }
     }
-    
+
+    /**
+     * Méthode pour effectuer une inscription d'un étudiant à un cours. Cette méthode écrit dans le fichier inscription.txt
+     * la session, le code du cours, et matricule, prénom, nom, et email de l'étudiant.
+     * Si l'inscription est un succès, on renvoie au client un string qui confirme l'inscription.
+     */
     public void handleRegistration() {
         try{
             //Création d'un writer pour écrire dans le fichier inscription.txt
             FileWriter fw = new FileWriter("src/main/java/server/data/inscription.txt", true);
             BufferedWriter writer = new BufferedWriter(fw);
 
-            RegistrationForm ficheInscription = (RegistrationForm)objectInputStream.readObject();
-
-            writer.write(ficheInscription.getCourse().getSession()+"\t"+
-            ficheInscription.getCourse().getCode()+"\t"+
-            ficheInscription.getMatricule()+"\t"+
-            ficheInscription.getPrenom()+"\t"+
-            ficheInscription.getNom()+"\t"+
-            ficheInscription.getEmail()+"\n");
+            RegistrationForm inscription = (RegistrationForm)objectInputStream.readObject();
+            writer.write(inscription.getCourse().getSession()+"\t"+ inscription.getCourse().getCode()+"\t"+
+            inscription.getMatricule()+"\t"+ inscription.getPrenom()+"\t"+
+            inscription.getNom()+"\t"+ inscription.getEmail()+"\n");
             writer.close();
 
-            String valide = "Inscription réussie de "+
-                            ficheInscription.getPrenom() + " au cours de " +
-                            ficheInscription.getCourse().getCode() + ".";
-            objectOutputStream.writeObject(valide);
-            objectOutputStream.flush();
-            
-        } catch (IOException | ClassNotFoundException ex){
-        System.out.println("Erreur");
+            objectOutputStream.writeObject("Inscription réussie de "+ inscription.getPrenom() + " au cours de " +
+                    inscription.getCourse().getCode() + ".");
+        } catch (IOException ex){
+            System.out.println("Erreur lors de la lecture ou l'écriture du fichier");
+        } catch (ClassNotFoundException ex){
+            System.out.println("Erreur: classe introuvable");
         }
-}
-
+    }
 }
 

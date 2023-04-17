@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Controller {
 
     public static ObservableList<Course> afficherCours(String session) {
-        final ObservableList<Course> cours = FXCollections.observableArrayList();
+        ObservableList<Course> cours = FXCollections.observableArrayList();
         try {
             Socket clientSocket = new Socket("localhost", 1337);
             ObjectOutputStream writer = new ObjectOutputStream(clientSocket.getOutputStream());
